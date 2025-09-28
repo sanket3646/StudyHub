@@ -115,7 +115,7 @@ export default function Dashboard() {
       if (orderData.error) throw new Error(orderData.error);
 
       const options: RazorpayOptions = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        key: process.env.RAZORPAY_KEY_ID,
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Study Notes",
