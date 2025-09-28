@@ -1,9 +1,10 @@
+import Navbar from "@/components/Navbar";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata = {
-  title: "My App",
-  description: "Auth example with Supabase",
+  title: "StudyHub",
+  description: "A notes marketplace",
 };
 
 export default function RootLayout({
@@ -13,8 +14,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        
+        <AuthProvider>
+          <Navbar/>
+          {children}
+          </AuthProvider>
       </body>
     </html>
   );
