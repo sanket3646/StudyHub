@@ -10,6 +10,33 @@ interface Note {
   price: number;
   file_path: string;
 }
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayOptions {
+  key: string | undefined;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => void;
+  theme: { color: string };
+}
+interface RazorpayConstructor {
+  new(options: RazorpayOptions):{
+    open: () => void;
+  };
+
+}
+declare global {
+  interface Window {
+    Razorpay: RazorpayConstructor;
+  }
+}
 
 // Load Razorpay script dynamically
 const loadRazorpayScript = () =>
@@ -87,14 +114,14 @@ export default function Dashboard() {
       const orderData = await orderRes.json();
       if (orderData.error) throw new Error(orderData.error);
 
-      const options: any = {
+      const options: RazorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Study Notes",
         description: note.title,
         order_id: orderData.id,
-        handler: async function (response: any) {
+        handler: async function (response) {
           try {
             if (!user) {
               alert("User not logged in");
@@ -115,18 +142,27 @@ export default function Dashboard() {
 
             setPurchasedIds((prev) => [...prev, note.id]);
             openPDF(note);
-          } catch (err: any) {
-            alert("Payment recorded, but failed to open PDF: " + err.message);
-          }
+              } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert("Payment recorded, but failed to open PDF: " + err.message);
+      } else {
+        alert("Payment recorded, but failed to open PDF due to unknown error.");
+      }
+    }
         },
         theme: { color: "#F59E0B" }, // warm amber theme
       };
 
-      const rzp = new (window as any).Razorpay(options);
+      const rzp = new window.Razorpay(options);
       rzp.open();
-    } catch (err: any) {
-      alert("Payment failed: " + err.message);
-    }
+} catch (err: unknown) {
+  if (err instanceof Error) {
+    alert("Payment failed: " + err.message);
+  } else {
+    alert("Payment failed due to unknown error.");
+  }
+}
+
   };
 
   if (!user) return null;

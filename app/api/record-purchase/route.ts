@@ -6,17 +6,24 @@ export async function POST(req: NextRequest) {
     const { userId, noteId, paymentId } = await req.json();
 
     if (!userId || !noteId || !paymentId) {
-      return NextResponse.json({ error: "userId, noteId, and paymentId required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "userId, noteId, and paymentId required" },
+        { status: 400 }
+      );
     }
 
-    const { data, error } = await supabase
+    // Only check for error; data is not needed
+    const { error } = await supabase
       .from("purchases")
       .insert([{ user_id: userId, note_id: noteId, payment_id: paymentId }]);
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

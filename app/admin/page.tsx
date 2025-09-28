@@ -28,6 +28,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!user) return;
     if (user.email !== adminEmail) router.push("/auth");
+    
   }, [user, router, adminEmail]);
 
   const fetchNotes = async () => {
@@ -44,7 +45,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (user?.email === adminEmail) fetchNotes();
-  }, [user]);
+  }, [user, adminEmail]);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,9 +79,13 @@ export default function AdminPage() {
       setPrice("");
       setFile(null);
       fetchNotes();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setMessage("❌ Upload failed: " + err.message);
+      if (err instanceof Error) {
+        setMessage("❌ Upload failed: " + err.message);
+      } else {
+        setMessage("❌ Upload failed: Unknown error");
+      }
     } finally {
       setUploading(false);
     }
@@ -107,9 +112,13 @@ export default function AdminPage() {
 
       setMessage(`✅ "${note.title}" deleted successfully.`);
       fetchNotes();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setMessage("❌ Delete failed: " + err.message);
+      if (err instanceof Error) {
+        setMessage("❌ Delete failed: " + err.message);
+      } else {
+        setMessage("❌ Delete failed: Unknown error");
+      }
     }
   };
 
@@ -118,7 +127,9 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white p-6 flex flex-col items-center">
       <div className="flex flex-col md:flex-row justify-between items-center w-full max-w-5xl mb-8 text-center md:text-left">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-4 md:mb-0">Admin Panel</h1>
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-4 md:mb-0">
+          Admin Panel
+        </h1>
         <button
           onClick={signOut}
           className="px-5 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
@@ -132,7 +143,9 @@ export default function AdminPage() {
         onSubmit={handleUpload}
         className="bg-white p-6 rounded-3xl shadow-md w-full max-w-md mb-8 text-center"
       >
-        <h2 className="text-2xl font-semibold mb-4 text-gray-900">Upload New Note</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-900">
+          Upload New Note
+        </h2>
 
         <div className="mb-4 text-left">
           <label className="block font-medium mb-1 text-gray-800">Title</label>
@@ -146,7 +159,9 @@ export default function AdminPage() {
         </div>
 
         <div className="mb-4 text-left">
-          <label className="block font-medium mb-1 text-gray-800">Price (₹)</label>
+          <label className="block font-medium mb-1 text-gray-800">
+            Price (₹)
+          </label>
           <input
             type="number"
             value={price}
@@ -157,7 +172,9 @@ export default function AdminPage() {
         </div>
 
         <div className="mb-4 text-left">
-          <label className="block font-medium mb-1 text-gray-800">Upload PDF</label>
+          <label className="block font-medium mb-1 text-gray-800">
+            Upload PDF
+          </label>
           <input
             type="file"
             accept="application/pdf"
@@ -189,7 +206,9 @@ export default function AdminPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl">
           {notes.map((note) => {
-            const { data } = supabase.storage.from("notes").getPublicUrl(note.file_path);
+            const { data } = supabase.storage
+              .from("notes")
+              .getPublicUrl(note.file_path);
             const publicUrl = data?.publicUrl || "#";
 
             return (
@@ -198,7 +217,9 @@ export default function AdminPage() {
                 className="bg-white p-6 rounded-3xl shadow-md flex flex-col justify-between hover:shadow-xl transition text-center"
               >
                 <div>
-                  <h3 className="text-lg font-bold mb-2 text-gray-900">{note.title}</h3>
+                  <h3 className="text-lg font-bold mb-2 text-gray-900">
+                    {note.title}
+                  </h3>
                   <p className="text-gray-800 mb-2">Price: ₹{note.price}</p>
                   <a
                     href={publicUrl}
