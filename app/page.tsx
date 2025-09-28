@@ -57,47 +57,39 @@ export default function HomePage() {
       </section>
 
       {/* Popular Notes */}
-      <section className="py-16 px-6 max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">Most Popular Notes</h2>
-        {loading ? (
-          <p className="text-gray-600 text-center">Loading notes...</p>
-        ) : popularNotes.length === 0 ? (
-          <p className="text-gray-600 text-center">No notes available yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {popularNotes.map((note) => {
-              const { data } = supabase.storage.from("notes").getPublicUrl(note.file_path);
-              const publicUrl = data?.publicUrl || "#";
+<section className="py-16 px-6 max-w-6xl mx-auto">
+  <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">
+    Most Popular Notes
+  </h2>
 
-              return (
-                <div
-                  key={note.id}
-                  className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition flex flex-col justify-between"
-                >
-                  <h3 className="text-xl font-bold mb-2 text-gray-900">{note.title}</h3>
-                  <p className="text-gray-700 mb-4">₹{note.price}</p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => window.open(publicUrl, "_blank")}
-                      className="w-full px-4 py-2 bg-amber-400 text-white rounded-full hover:bg-amber-500 transition"
-                    >
-                      Preview
-                    </button>
-                    {user && (
-                      <button
-                        onClick={() => router.push("/dashboard")}
-                        className="w-full px-4 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
-                      >
-                        Buy / View
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+  {loading ? (
+    <p className="text-gray-600 text-center">Loading notes...</p>
+  ) : popularNotes.length === 0 ? (
+    <p className="text-gray-600 text-center">No notes available yet.</p>
+  ) : (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {popularNotes.map((note) => (
+        <div
+          key={note.id}
+          className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition flex flex-col justify-between"
+        >
+          <h3 className="text-xl font-bold mb-2 text-gray-900">{note.title}</h3>
+          <p className="text-gray-700 mb-4">₹{note.price}</p>
+
+          <button
+            onClick={() =>
+              user ? router.push("/dashboard") : router.push("/auth")
+            }
+            className="w-full px-4 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+          >
+            Buy Now
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+</section>
+
 
       {/* CTA Section */}
       <section className="bg-amber-50 py-16 px-6 text-center rounded-t-3xl shadow-inner">
