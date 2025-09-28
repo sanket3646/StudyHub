@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 export const metadata = {
   title: "StudyHub",
   description: "A notes marketplace",
+  colorScheme: "light",
 };
 
 export default function RootLayout({

@@ -11,7 +11,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [message, setMessage] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false)
   // Redirect if user is already signed in
   useEffect(() => {
     if (user) router.push("/dashboard");
@@ -73,14 +73,14 @@ export default function AuthPage() {
           {isSignUp ? "Already have an account?" : "Don’t have an account?"}{" "}
           <span
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-orange-500 font-semibold cursor-pointer hover:underline"
+            className="text-white bg-blue-400 p-2 rounded-2xl font-semibold cursor-pointer hover:underline"
           >
             {isSignUp ? "Sign In" : "Sign Up"}
           </span>
         </p>
 
         {message && (
-          <p className="mt-4 text-center text-sm text-red-500">{message}</p>
+          <p className="mt-4 text-center text-sm font-bold text-red-500">{message}</p>
         )}
       </form>
     </div>
